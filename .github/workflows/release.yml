@@ -36,16 +36,16 @@ jobs:
         mkdir -p debian/qstamina/usr/share/icons/hicolor/128x128/apps
         mkdir -p debian/qstamina/usr/share/icons/hicolor/256x256/apps
 
-      # Copy resources
+        # Copy resources
         cp -r src/resources/* debian/qstamina/usr/share/qstamina/
 
-      # Copy binary
+        # Copy binary
         cp QStamina debian/qstamina/usr/bin/qstamina
 
-      # copy deskop entry
+        # copy deskop entry
         mv debian/qstamina/usr/share/qstamina/qstamina.desktop debian/qstamina/usr/share/applications/qstamina.desktop
 
-      # Create control file
+        # Create control file
         cat > debian/qstamina/DEBIAN/control << EOF
         Package: qstamina
         Version: ${GITHUB_REF_NAME#v}
@@ -61,7 +61,7 @@ jobs:
         cd debian/qstamina
         dpkg-deb --build . ../qstamina_${GITHUB_REF_NAME#v}.deb
 
-    # Create GitHub Release (using actions/create-release)
+      # Create GitHub Release (using actions/create-release)
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -73,7 +73,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # Upload Release Asset
+      # Upload Release Asset
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       with:
