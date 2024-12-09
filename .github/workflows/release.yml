@@ -61,23 +61,24 @@ jobs:
         cd debian/qstamina
         dpkg-deb --build . ../qstamina_${GITHUB_REF_NAME#v}.deb
 
-      # Create GitHub Release (using actions/create-release)
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}  
+        release_name: Release ${{ github.ref }}  
+        draft: false
+        prerelease: false
 
-      # Upload Release Asset
     - name: Upload Release Asset
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: debian/qstamina_*.deb
-        asset_name: qstamina_${GITHUB_REF_NAME#v}.deb
+        asset_path: ./qstamina-${{ github.ref }}-Linux.deb  
+        asset_name: qstamina-${{ github.ref }}-Linux.deb  
         asset_content_type: application/vnd.debian.binary-package
