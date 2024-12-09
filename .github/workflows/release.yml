@@ -25,9 +25,16 @@ jobs:
 
     - name: Prepare Debian Package
       run: |
+        mkdir -p debian/qstamina/DEBIAN
         mkdir -p debian/qstamina/usr/share/qstamina
         mkdir -p debian/qstamina/usr/share/applications
         mkdir -p debian/qstamina/usr/bin
+        mkdir -p debian/qstamina/usr/share/icons
+        mkdir -p debian/qstamina/usr/share/icons/hicolor/16x16/apps
+        mkdir -p debian/qstamina/usr/share/icons/hicolor/32x32/apps
+        mkdir -p debian/qstamina/usr/share/icons/hicolor/48x48/apps
+        mkdir -p debian/qstamina/usr/share/icons/hicolor/128x128/apps
+        mkdir -p debian/qstamina/usr/share/icons/hicolor/256x256/apps
 
         # Copy resources
         cp -r src/resources/* debian/qstamina/usr/share/qstamina/
@@ -36,9 +43,18 @@ jobs:
         cp QStamina debian/qstamina/usr/bin/qstamina
 
         #copy deskop entry
-
         mv debian/qstamina/usr/share/qstamina/qstamina.desktop debian/qstamina/usr/share/applications/qstamina.desktop
 
+        # Create control file
+        cat > debian/qstamina/DEBIAN/control << EOF
+        Package: qstamina
+        Version: ${GITHUB_REF_NAME#v}
+        Architecture: amd64
+        Maintainer: Zer0C00I
+        Depends: ${shlibs:Depends}, ${misc:Depends}, libqt5core5a, libqt5gui5, libqt5widgets5, qtmultimedia5
+        Description: Typing tutor software
+        QStamina is a typing tutor that helps users improve their typing speed.
+        EOF
 
     - name: Build DEB Package
       run: |
