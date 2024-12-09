@@ -53,7 +53,7 @@ jobs:
         Maintainer: Zer0C00I
         Depends: libqt5core5a, libqt5gui5, libqt5widgets5, libqtmultimedia5
         Description: Typing tutor software
-        QStamina is a typing tutor that helps users improve their typing speed.
+          QStamina is a typing tutor that helps users improve their typing speed.
         EOF
 
     - name: Build DEB Package
