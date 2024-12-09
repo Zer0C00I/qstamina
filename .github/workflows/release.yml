@@ -51,7 +51,7 @@ jobs:
         Version: ${GITHUB_REF_NAME#v}
         Architecture: amd64
         Maintainer: Zer0C00I
-        Depends: ${shlibs:Depends}, ${misc:Depends}, libqt5core5a, libqt5gui5, libqt5widgets5, qtmultimedia5
+        Depends: libqt5core5a, libqt5gui5, libqt5widgets5, libqtmultimedia5
         Description: Typing tutor software
         QStamina is a typing tutor that helps users improve their typing speed.
         EOF
