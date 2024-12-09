@@ -50,13 +50,14 @@ jobs:
         # Copy binary
         cp QStamina debian/qstamina/usr/bin/qstamina
 
-        # copy deskop entry
+        # Copy desktop entry
         mv debian/qstamina/usr/share/qstamina/qstamina.desktop debian/qstamina/usr/share/applications/qstamina.desktop
 
-        # Create control file
+        # Create control file using GITHUB_RUN_NUMBER
+        version="1.${{ github.run_number }}"  
         cat > debian/qstamina/DEBIAN/control << EOF
         Package: qstamina
-        Version: ${GITHUB_REF_NAME#v}
+        Version: $version
         Architecture: amd64
         Maintainer: Zer0C00I
         Depends: libqt5core5a, libqt5gui5, libqt5widgets5, libqtmultimedia5
@@ -67,7 +68,7 @@ jobs:
     - name: Build DEB Package
       run: |
         cd debian/qstamina
-        dpkg-deb --build . ../qstamina_${GITHUB_REF_NAME#v}.deb
+        dpkg-deb --build . ../qstamina_${{ github.run_number }}.deb
 
     - name: Create Release
       id: create_release
