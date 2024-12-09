@@ -2,14 +2,18 @@ name: 'Build and Release DEB Package'
 
 on:
   push:
-    tags:
-      - 'v*'  # Trigger on version tags
+    branches:
+      - master
+      - main
+      - feature/github_actions
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    permissions: write-all
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
     - uses: actions/checkout@v2
@@ -71,8 +75,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ github.ref_name }}
+        tag_name: ${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
         draft: false
         prerelease: false
 
@@ -83,6 +87,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./debian/qstamina_${{ github.ref_name }}.deb
-        asset_name: qstamina_${{ github.ref_name }}.deb
+        asset_path: ./debian/qstamina_${{ github.run_number }}.deb
+        asset_name: qstamina_${{ github.run_number }}.deb
         asset_content_type: application/vnd.debian.binary-package
