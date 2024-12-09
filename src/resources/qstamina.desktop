@@ -1,8 +1,20 @@
 [Desktop Entry]
-Name=QStamina
-GenericName=Typing tutor
 Type=Application
-Comment=Typing tutor
 Exec=qstamina
 Icon=qstamina
-Categories=Utility;
+Categories=Utility;Education;Training;Typing;
+
+# English translations
+Name[en]=QStamina
+GenericName[en]=Typing tutor
+Comment[en]=A typing tutor application
+
+# Russian translations
+Name[ru]=QStamina
+GenericName[ru]=Тренажёр для набора текста
+Comment[ru]=Программа для тренировки печати
+
+# Ukrainian translations
+Name[uk]=QStamina
+GenericName[uk]=Тренажер для набору тексту
+Comment[uk]=Програма для тренування друку

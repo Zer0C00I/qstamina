@@ -60,17 +60,20 @@ void Config::setEnableSound(bool enableSound)
 
 QString Config::resourcesPath()
 {
-    #ifdef Q_OS_LINUX
-        qDebug() << "Using resources path:" << QApplication::applicationDirPath() + "/resources";
-        return QApplication::applicationDirPath() + "/resources";
-    #endif
-    #ifdef Q_OS_MACX
-        return QApplication::applicationDirPath() + "/../Resources";
-    #endif
-    #ifdef Q_OS_WIN
-        return QApplication::applicationDirPath();
-    #endif
-        return QString();
+#ifdef Q_OS_LINUX
+    QDir resourcesDir;
+    resourcesDir.setCurrent("/usr/share/qstamina");
+    if (!resourcesDir.exists())
+        resourcesDir.setCurrent(QApplication::applicationDirPath());
+    return resourcesDir.absolutePath();
+#endif
+#ifdef Q_OS_MACX
+    return QApplication::applicationDirPath() + "/../Resources";
+#endif
+#ifdef Q_OS_WIN
+    return QApplication::applicationDirPath();
+#endif
+    return QString();
 }
 QString Config::lastLayout() const
 {

@@ -1,0 +1,60 @@
+name: 'Build and Release DEB Package'
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qtbase5-dev qt5-qmake qttools5-dev-tools \
+        build-essential debhelper devscripts
+
+    - name: Build Project
+      run: |
+        qmake
+        make
+
+    - name: Prepare Debian Package
+      run: |
+        mkdir -p debian/qstamina/usr/share/qstamina
+        mkdir -p debian/qstamina/usr/share/applications
+        mkdir -p debian/qstamina/usr/bin
+
+        # Copy resources
+        cp -r src/resources/* debian/qstamina/usr/share/qstamina/
+
+        # Copy binary
+        cp QStamina debian/qstamina/usr/bin/qstamina
+
+        #copy deskop entry
+
+        mv debian/qstamina/usr/share/qstamina/qstamina.desktop debian/qstamina/usr/share/applications/qstamina.desktop
+
+
+    - name: Build DEB Package
+      run: |
+        cd debian/qstamina
+        dpkg-deb --build . ../qstamina_${GITHUB_REF_NAME#v}.deb
+
+    - name: Upload DEB Package
+      uses: actions/upload-artifact@v3
+      with:
+        name: qstamina-deb
+        path: debian/qstamina_*.deb
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: debian/qstamina_*.deb
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
