@@ -1,3 +1,4 @@
+#include <QRegularExpression>
 #include "keyboard.h"
 #include "ui_keyboard.h"
 
@@ -24,7 +25,9 @@ void Keyboard::loadKeyboard(QString layout)
     QString colorName;
     QColor color;
     QWidget *letterParent;
-    QList<QFrame *> list = ui->keyboard->findChildren<QFrame *>(regexp);
+    QRegularExpression regExp(regexp.pattern());
+    QList<QFrame *> list = ui->keyboard->findChildren<QFrame *>(regExp);
+
     for (int q = 0; q < list.count(); q++)
     {
         name = list.at(q)->objectName();

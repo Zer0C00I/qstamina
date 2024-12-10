@@ -1,10 +1,12 @@
+#include <QRandomGenerator>
 #include "lessongenerator.h"
 
 LessonGenerator::LessonGenerator(Config *config)
 {
+    if (!config) {
+        throw std::invalid_argument("Config cannot be null");
+    }
     m_config = config;
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
 }
 
 bool LessonGenerator::generate()
@@ -17,7 +19,11 @@ bool LessonGenerator::generate()
     rulesFile.setFileName(rulesFilePath);
     if( rulesFile.open(QIODevice::ReadOnly) )
     {
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(rulesFile.readAll());
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(rulesFile.readAll());
+            if (jsonDoc.isNull()) {
+                qDebug() << "Failed to parse JSON";
+                return false;
+            }
         QJsonArray jsonArray = jsonDoc.array();
         for( int i = 0; i < jsonArray.count(); i++ )
         {
@@ -62,18 +68,17 @@ void LessonGenerator::generateLessons()
 
 QStringList LessonGenerator::generateWords(QString alphabet, int wordsMaxCount, int minSymbols, int maxSymbols)
 {
+    int wordLen = QRandomGenerator::global()->bounded(minSymbols, maxSymbols + 1);
+    const int MIN_WORDS_COUNT = 2;
+    int wordsCount = QRandomGenerator::global()->bounded(MIN_WORDS_COUNT, wordsMaxCount + 1);
 
-    int wordLen = qrand() % ((maxSymbols + 1) - minSymbols) + minSymbols;
-    int wordsCount = qrand() % (wordsMaxCount) + 2;
-
-    //qDebug()<<alphabet<<wordsCount<<wordLen;
     QStringList words;
-    for( int j = 0; j < wordsCount; j++ )
+    for(int j = 0; j < wordsCount; j++)
     {
         QString word;
-        for( int i = 0; i < wordLen; i++ )
+        for(int i = 0; i < wordLen; i++)
         {
-            int symbolNumber = qrand() % (alphabet.size());
+            int symbolNumber = QRandomGenerator::global()->bounded(alphabet.size());
             word.append(alphabet.at(symbolNumber));
         }
         words.append(word);
@@ -85,7 +90,10 @@ bool LessonGenerator::save(QString saveFilePath)
 {
     QFile rulesFile;
     rulesFile.setFileName(saveFilePath);
-    rulesFile.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
+    if (!rulesFile.open(QFile::WriteOnly | QFile::Text | QFile::Truncate)) {
+        qDebug() << "Failed to open file for writing:" << rulesFile.errorString();
+        return false;
+    }
 
     QJsonArray jsonArray;
     for( int i = 0; i < m_lessons.size(); i++ )
